@@ -1,4 +1,4 @@
-package main
+package board
 
 import (
 	"fmt"
@@ -54,10 +54,28 @@ func (t *Tower) isFull() bool {
 	return true
 }
 
+// isComplete returns if the Tower is full and all balls are the same color
+func (t *Tower) isComplete() bool {
+	if !t.isFull() {
+		return false
+	}
+
+	color := t.Balls[0].Color
+
+	for i := range t.Balls {
+		if t.Balls[i].Color != color {
+			return false
+		}
+	}
+
+	return true
+}
+
 // BoardState struct represents the state of the board
 type BoardState struct {
-	Board []*Tower
-	Move  Move
+	Board    []*Tower
+	Move     Move
+	Previous []*BoardState
 }
 
 // applyMove returns a pointer to a new BoardState after applying the move
@@ -82,8 +100,9 @@ func (bs *BoardState) applyMove() *BoardState {
 
 	// Create a new BoardState with the new towers copy
 	newBoardState := &BoardState{
-		Board: newTowers,
-		Move:  bs.Move,
+		Board:    newTowers,
+		Move:     bs.Move,
+		Previous: append(bs.Previous, bs),
 	}
 
 	// Nil the ball in the "from" tower
@@ -147,6 +166,24 @@ func (bs *BoardState) isEqual(other *BoardState) bool {
 
 	// Check that the move is the same
 	return bs.Move.To.Index == other.Move.To.Index && bs.Move.From.Index == other.Move.From.Index
+}
+
+func (bs *BoardState) isSolved(expectedEmpty int) bool {
+	var numEmptyTowers int
+	var numCompleteTowers int
+
+	for _, tower := range bs.Board {
+		if tower.isEmpty() {
+			numEmptyTowers++
+			continue
+		}
+		if tower.isComplete() {
+			numCompleteTowers++
+			continue
+		}
+	}
+
+	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(bs.Board)-expectedEmpty
 }
 
 // String method to return the string representation of a BoardState
