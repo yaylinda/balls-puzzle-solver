@@ -1,29 +1,8 @@
 package models
 
 import (
-	"fmt"
 	"strings"
 )
-
-// CreateBoardFromPuzzle creates a Board from a puzzle
-func CreateBoardFromPuzzle(puzzle [][]string) *Board {
-	colorCount := make(map[string]int)
-	towers := make([]*Tower, len(puzzle))
-
-	for i, towerBalls := range puzzle {
-		tower := &Tower{Index: i, Balls: make([]*Ball, len(towerBalls))}
-		for j, color := range towerBalls {
-			if color != "" {
-				colorCount[color]++
-				id := fmt.Sprintf("%s_%d", color, colorCount[color])
-				tower.Balls[j] = &Ball{ID: id, Color: color}
-			}
-		}
-		towers[i] = tower
-	}
-
-	return &Board{Towers: towers}
-}
 
 // getNextValidMoves returns the next valid moves for the board
 func (b *Board) getNextValidMoves() []*Move {
@@ -105,7 +84,10 @@ func (b *Board) deepCopy() *Board {
 			}
 			newBalls = append(newBalls, newBall)
 		}
-		newTowers = append(newTowers, &Tower{Balls: newBalls, Index: tower.Index})
+		newTowers = append(
+			newTowers,
+			&Tower{Balls: newBalls, Index: tower.Index},
+		)
 	}
 
 	return &Board{Towers: newTowers}
