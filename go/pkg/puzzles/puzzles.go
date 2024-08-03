@@ -16,3 +16,54 @@ var PUZZLE_HARD = [][]string{
 	{"", "", "", ""},
 	{"", "", "", ""},
 }
+
+var PUZZLE_COMPLETE = [][]string{
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"", "", "", ""},
+	{"", "", "", ""},
+}
+
+var PUZZLE_EASY_1 = [][]string{
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"", "color", "color", "color"},
+	{"", "", "", "color"},
+	{"", "", "", ""},
+}
+
+var PUZZLE_EASY_2 = [][]string{
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"color", "color", "color", "color"},
+	{"", "", "color", "color"},
+	{"", "", "", "color"},
+	{"", "", "", "color"},
+}

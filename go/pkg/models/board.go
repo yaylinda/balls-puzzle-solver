@@ -127,6 +127,8 @@ func (b *Board) IsSolved(expectedEmpty int) bool {
 		}
 	}
 
+	fmt.Printf("\t\t numEmptyTowers=%d, numCompleteTowers=%d\n", numEmptyTowers, numCompleteTowers)
+
 	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(b.Towers)-expectedEmpty
 }
 
@@ -145,6 +147,7 @@ func (b *Board) String() string {
 	var builder strings.Builder
 
 	for _, tower := range b.Towers {
+		builder.WriteString("\t")
 		builder.WriteString(tower.String())
 		builder.WriteString("\n")
 	}

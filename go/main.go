@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Create a board from the puzzle
-	initialBoard := models.CreateBoardFromPuzzle(puzzles.PUZZLE_HARD)
+	initialBoard := models.CreateBoardFromPuzzle(puzzles.PUZZLE_EASY_1)
 
 	// Keep track of the visited states
 	visited := make(map[string]bool)
@@ -32,12 +32,11 @@ func main() {
 
 		// Get the first element of the queue
 		currentState := queue[0]
-		queue = queue[1:]
 
 		// Check if the current state is the final state
 		if currentState.Board.IsSolved(2) {
 			fmt.Println(currentState.PrintSolution())
-			return
+			break
 		}
 
 		// Mark the current state as visited
@@ -47,13 +46,21 @@ func main() {
 		nextStates := currentState.GetNextPossibleStates()
 
 		// Add the next possible states to the queue if they have not been visited
+		numNew := 0
 		for _, nextState := range nextStates {
 			hash := nextState.String()
 			if !visited[hash] && !willVisit[hash] {
-				queue = append(queue, nextState)
+				numNew++
+				// fmt.Printf("\t\t[%d] %s\n", numNew, hash)
 				willVisit[hash] = true
+				queue = append(queue, nextState)
 			}
 		}
+
+		fmt.Printf("\tadded %d / %d next possible states\n", numNew, len(nextStates))
+
+		// Remove the current state from the queue
+		queue = queue[1:]
 
 		iteration++
 	}

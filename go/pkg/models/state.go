@@ -52,13 +52,15 @@ func (bs *BoardState) String() string {
 func (bs *BoardState) PrintSolution() string {
 	var builder strings.Builder
 
-	builder.WriteString(fmt.Sprintf("Solution with %d moves\n", len(bs.Previous)+1))
-	builder.WriteString("============================================\n\n")
+	builder.WriteString("============================================\n")
+	builder.WriteString(fmt.Sprintf("Solution with %d moves\n", len(bs.Previous)))
+	builder.WriteString("============================================\n")
 
-	for i, board := range bs.Previous {
-		builder.WriteString(fmt.Sprintf("Move %d\n:", i+1))
+	boards := append(bs.Previous, bs.Board)
+	for i, board := range boards {
+		builder.WriteString(fmt.Sprintf("Move %d:\n", i))
 		builder.WriteString(board.String())
-		builder.WriteString("----------------------------------\n\n")
+		builder.WriteString("----------------------------------\n")
 	}
 
 	return builder.String()
