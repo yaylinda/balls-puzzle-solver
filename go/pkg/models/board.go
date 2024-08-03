@@ -1,35 +1,116 @@
 package models
 
 import (
+	"fmt"
 	"strings"
 )
 
-func (b *Board) String() string {
-	var builder strings.Builder
+// CreateBoardFromPuzzle creates a Board from a puzzle
+func CreateBoardFromPuzzle(puzzle [][]string) *Board {
+	colorCount := make(map[string]int)
+	towers := make([]*Tower, len(puzzle))
 
-	for _, tower := range b.Towers {
-		builder.WriteString("[")
-		for i, ball := range tower.Balls {
-			if i > 0 {
-				builder.WriteString(",")
-			}
-			if ball == nil {
-				builder.WriteString(" ")
-			} else {
-				builder.WriteString(ball.Color)
+	for i, towerBalls := range puzzle {
+		tower := &Tower{Index: i, Balls: make([]*Ball, len(towerBalls))}
+		for j, color := range towerBalls {
+			if color != "" {
+				colorCount[color]++
+				id := fmt.Sprintf("%s_%d", color, colorCount[color])
+				tower.Balls[j] = &Ball{ID: id, Color: color}
 			}
 		}
-		builder.WriteString("]")
+		towers[i] = tower
 	}
 
-	return builder.String()
+	return &Board{Towers: towers}
 }
 
-func (bs *BoardState) isSolved(expectedEmpty int) bool {
+// getNextValidMoves returns the next valid moves for the board
+func (b *Board) getNextValidMoves() []*Move {
+	var moves []*Move
+
+	for _, t1 := range b.Towers {
+		for _, t2 := range b.Towers {
+			move := &Move{From: t1, To: t2}
+			if b.isMoveValid(move) {
+				moves = append(moves, move)
+			}
+		}
+	}
+
+	return moves
+}
+
+// isMoveValid returns if the given move is valid for the board
+func (b *Board) isMoveValid(move *Move) bool {
+	if move.From.Index == move.To.Index ||
+		move.From.isEmpty() ||
+		move.From.isComplete() ||
+		move.To.isFull() {
+		return false
+	}
+
+	ballToMove, _ := move.From.getTopBall()
+	if ballToMove == nil {
+		// This should not happen, since we already checked if the Tower is empty
+		return false
+	}
+
+	ballToPutOnTopOf, _ := move.To.getTopBall()
+	if ballToPutOnTopOf == nil {
+		// The destination Tower is empty, so we can put any ball on top of it
+		return true
+	}
+
+	// Verify if the ball to move has the same color as the ball to put on top of
+	return ballToMove.Color == ballToPutOnTopOf.Color
+}
+
+// applyMove applies the move to the board and returns the new board
+func (b *Board) applyMove(move *Move) *Board {
+	newBoard := b.deepCopy()
+
+	// Nil the ball in the "from" tower
+	fromTowerIndex := move.From.Index
+	fromBall, fromBallIndex := move.From.getTopBall()
+	newBoard.Towers[fromTowerIndex].Balls[fromBallIndex] = nil
+
+	// Set the ball in the "to" tower
+	toTowerIndex := move.To.Index
+	_, toBallIndex := move.To.getTopBall()
+	newBoard.Towers[toTowerIndex].Balls[toBallIndex] = &Ball{
+		ID:    fromBall.ID,
+		Color: fromBall.Color,
+	}
+
+	return newBoard
+}
+
+// deepCopy returns a copy of the board as a new pointer
+func (b *Board) deepCopy() *Board {
+	var newTowers []*Tower
+
+	for _, tower := range b.Towers {
+		var newBalls []*Ball
+		for _, ball := range tower.Balls {
+			if ball == nil {
+				newBalls = append(newBalls, nil)
+				continue
+			}
+			newBalls = append(newBalls, &Ball{ID: ball.ID, Color: ball.Color})
+		}
+		newTowers = append(newTowers, &Tower{Balls: newBalls, Index: tower.Index})
+	}
+
+	return &Board{Towers: newTowers}
+}
+
+// IsSolved returns if the board is solved
+func (b *Board) IsSolved(expectedEmpty int) bool {
 	var numEmptyTowers int
 	var numCompleteTowers int
 
-	for _, tower := range bs.Board {
+	for _, tower := range b.Towers {
 		if tower.isEmpty() {
 			numEmptyTowers++
 			continue
@@ -40,5 +121,27 @@ func (bs *BoardState) isSolved(expectedEmpty int) bool {
 		}
 	}
 
-	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(bs.Board)-expectedEmpty
+	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(b.Towers)-expectedEmpty
+}
+
+// isEqual returns if the board's towers are equal to the other board's towers
+func (b *Board) isEqual(other *Board) bool {
+	for i, t := range b.Towers {
+		if !t.isEqual(other.Towers[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+// String method to return the string representation of a Board
+func (b *Board) String() string {
+	var builder strings.Builder
+
+	for _, tower := range b.Towers {
+		builder.WriteString(tower.String())
+		builder.WriteString("\n")
+	}
+
+	return builder.String()
 }

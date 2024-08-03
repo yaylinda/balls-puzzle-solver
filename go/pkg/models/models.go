@@ -25,7 +25,7 @@ type Board struct {
 
 // BoardState struct represents a board state node in the search tree
 type BoardState struct {
-	Board    Board
-	Move     Move
+	Board    *Board
+	Move     *Move
 	Previous []*Board
 }

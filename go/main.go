@@ -1,39 +1,27 @@
 package main
 
 import (
+	"fmt"
+
 	"balls_puzzle_solver/pkg/models"
 	"balls_puzzle_solver/pkg/puzzles"
 )
 
 func main() {
-	// Load the puzzle
-	towers := puzzles.CreateTowers(puzzles.PUZZLE_HARD)
-
-	// Create a queue to keep track of the possible moves
-	var queue []*models.BoardState
-
-	// Populate the queue with all possible initial moves
-	for i, t1 := range towers {
-		for j, t2 := range towers {
-			if towers[i].Index == towers[j].Index {
-				continue
-			}
-
-			boardState := &models.BoardState{
-				Board: towers,
-				Move: models.Move{
-					From: t1,
-					To:   t2,
-				},
-				Previous: []*models.BoardState{},
-			}
-
-			queue = append(queue, boardState)
-		}
-	}
+	// Create a board from the puzzle
+	initialBoard := models.CreateBoardFromPuzzle(puzzles.PUZZLE_HARD)
 
 	// Keep track of the visited states
 	visited := make(map[string]bool)
+
+	// Create a queue with the initial state
+	queue := []*models.BoardState{
+		{
+			Board:    initialBoard,
+			Move:     nil,
+			Previous: []*models.Board{},
+		},
+	}
 
 	// Iterate over the queue
 	for len(queue) > 0 {
@@ -42,24 +30,22 @@ func main() {
 		queue = queue[1:]
 
 		// Check if the current state is the final state
-		if currentState.IsFinalState() {
-			// Print the path to the solution
-			currentState.PrintPath()
-			break
-		}
-
-		// Check if the current state has been visited
-		if visited[currentState.Hash()] {
-			continue
+		if currentState.Board.IsSolved(2) {
+			fmt.Println(currentState.PrintSolution())
+			return
 		}
 
 		// Mark the current state as visited
-		visited[currentState.Hash()] = true
+		visited[currentState.String()] = true
 
-		// Get the next possible moves
-		nextStates := currentState.GetNextStates()
+		// Get the next possible states
+		nextStates := currentState.GetNextPossibleStates()
 
-		// Add the next possible moves to the queue
-		queue = append(queue, nextStates...)
+		// Add the next possible states to the queue if they have not been visited
+		for _, nextState := range nextStates {
+			if !visited[nextState.String()] {
+				queue = append(queue, nextState)
+			}
+		}
 	}
 }
