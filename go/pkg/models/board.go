@@ -93,8 +93,8 @@ func (b *Board) deepCopy() *Board {
 	return &Board{Towers: newTowers}
 }
 
-// IsSolved returns if the board is solved
-func (b *Board) IsSolved(expectedEmpty int) bool {
+// isSolved returns if the board is solved
+func (b *Board) isSolved(expectedEmpty int) bool {
 	var numEmptyTowers int
 	var numCompleteTowers int
 
@@ -114,18 +114,8 @@ func (b *Board) IsSolved(expectedEmpty int) bool {
 	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(b.Towers)-expectedEmpty
 }
 
-// isEqual returns if the board's towers are equal to the other board's towers
-func (b *Board) isEqual(other *Board) bool {
-	for i, t := range b.Towers {
-		if !t.isEqual(other.Towers[i]) {
-			return false
-		}
-	}
-	return true
-}
-
-// String method to return the string representation of a Board
-func (b *Board) String() string {
+// string returns the string representation of the board
+func (b *Board) string() string {
 	var builder strings.Builder
 
 	for _, tower := range b.Towers {

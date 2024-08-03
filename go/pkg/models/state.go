@@ -26,27 +26,14 @@ func (bs *BoardState) GetNextPossibleStates() []*BoardState {
 	return nextStates
 }
 
-// isEqual returns if the BoardState is equal to the other BoardState
-func (bs *BoardState) isEqual(other *BoardState) bool {
-	if !bs.Board.isEqual(other.Board) {
-		return false
-	}
-
-	// Verify that the move is the same
-	return bs.Move.To.Index == other.Move.To.Index && bs.Move.From.Index == other.Move.From.Index
+// IsSolved returns if the board state is solved
+func (bs *BoardState) IsSolved(expectedEmpty int) bool {
+	return bs.Board.isSolved(expectedEmpty)
 }
 
-// String returns the string representation of the BoardState
+// String returns the string representation of the board
 func (bs *BoardState) String() string {
-	// var builder strings.Builder
-	//
-	// builder.WriteString(bs.Board.String())
-	// if bs.Move != nil {
-	// 	builder.WriteString(fmt.Sprintf("%d->%d", bs.Move.From.Index, bs.Move.To.Index))
-	// }
-	//
-	// return builder.String()
-	return bs.Board.String()
+	return bs.Board.string()
 }
 
 // PrintSolution returns the string representation of the solution
@@ -54,13 +41,18 @@ func (bs *BoardState) PrintSolution() string {
 	var builder strings.Builder
 
 	builder.WriteString("============================================\n")
-	builder.WriteString(fmt.Sprintf("Solution with %d moves\n", len(bs.Previous)))
+	builder.WriteString(
+		fmt.Sprintf(
+			"Solution with %d moves\n",
+			len(bs.Previous),
+		),
+	)
 	builder.WriteString("============================================\n")
 
 	boards := append(bs.Previous, bs.Board)
 	for i, board := range boards {
 		builder.WriteString(fmt.Sprintf("Move %d:\n", i))
-		builder.WriteString(board.String())
+		builder.WriteString(board.string())
 		builder.WriteString("----------------------------------\n")
 	}
 

@@ -42,7 +42,7 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 		currentState := queue[0]
 
 		// Check if the current state is the final state
-		if currentState.Board.IsSolved(2) {
+		if currentState.IsSolved(2) {
 			return currentState, iteration
 		}
 
