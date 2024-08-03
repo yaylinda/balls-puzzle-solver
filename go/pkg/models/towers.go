@@ -67,8 +67,8 @@ func (t *Tower) isEqual(other *Tower) bool {
 	return true
 }
 
-// String method to return the string representation of a Tower
-func (t *Tower) String() string {
+// string returns the string representation of the Tower
+func (t *Tower) string() string {
 	var builder strings.Builder
 
 	builder.WriteString("[")

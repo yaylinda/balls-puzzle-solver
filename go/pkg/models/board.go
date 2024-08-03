@@ -1,8 +1,13 @@
 package models
 
 import (
+	"sort"
 	"strings"
 )
+
+func (b *Board) score() int {
+	return 0
+}
 
 // getNextValidMoves returns the next valid moves for the board
 func (b *Board) getNextValidMoves() []*Move {
@@ -114,13 +119,26 @@ func (b *Board) isSolved(expectedEmpty int) bool {
 	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(b.Towers)-expectedEmpty
 }
 
+// hash returns a unique "hashed" string representation of the board
+func (b *Board) hash() string {
+	var towerStrings []string
+
+	for _, tower := range b.Towers {
+		towerStrings = append(towerStrings, tower.string())
+	}
+
+	sort.Strings(towerStrings)
+
+	return strings.Join(towerStrings, "")
+}
+
 // string returns the string representation of the board
 func (b *Board) string() string {
 	var builder strings.Builder
 
 	for _, tower := range b.Towers {
 		builder.WriteString("\t")
-		builder.WriteString(tower.String())
+		builder.WriteString(tower.string())
 		builder.WriteString("\n")
 	}
 

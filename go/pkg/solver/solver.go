@@ -47,7 +47,7 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 		}
 
 		// Mark the current state as visited
-		visited[currentState.String()] = true
+		visited[currentState.Hash()] = true
 
 		// Get the next possible states
 		nextStates := currentState.GetNextPossibleStates()
@@ -55,7 +55,7 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 		// Add the next possible states to the queue if they have not been visited
 		numNew := 0
 		for _, nextState := range nextStates {
-			hash := nextState.String()
+			hash := nextState.Hash()
 			if !visited[hash] && !willVisit[hash] {
 				numNew++
 				// fmt.Printf("\t\t[%d] %s\n", numNew, hash)

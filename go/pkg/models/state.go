@@ -9,6 +9,8 @@ import (
 func (bs *BoardState) GetNextPossibleStates() []*BoardState {
 	validMoves := bs.Board.getNextValidMoves()
 
+	// TODO: Trimming logic
+
 	var nextStates []*BoardState
 
 	for _, move := range validMoves {
@@ -31,9 +33,9 @@ func (bs *BoardState) IsSolved(expectedEmpty int) bool {
 	return bs.Board.isSolved(expectedEmpty)
 }
 
-// String returns the string representation of the board
-func (bs *BoardState) String() string {
-	return bs.Board.string()
+// Hash returns a unique "hashed" string representation of the board
+func (bs *BoardState) Hash() string {
+	return bs.Board.hash()
 }
 
 // PrintSolution returns the string representation of the solution
