@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import deque
 from typing import List, Tuple
 from copy import deepcopy
 
@@ -39,18 +40,31 @@ def make_move(state: List[List[str]], from_tower: int, to_tower: int) -> List[Li
 
 
 def is_solved(state: List[List[str]]) -> bool:
-    return all(len(set(tower) - {""}) <= 1 and tower.count("") == 0 for tower in state if "" not in tower)
+    full_towers = 0
+    empty_towers = 0
+
+    for tower in state:
+        if all(ball == "" for ball in tower):
+            empty_towers += 1
+        elif all(ball != "" for ball in tower) and len(set(tower)) == 1:
+            full_towers += 1
+
+    return full_towers == 12 and empty_towers == 2
 
 
 def solve(initial_state: List[List[str]]) -> List[Tuple[int, int]] | None:
-    stack = [(initial_state, [])]  # (state, moves)
+    queue = deque([(initial_state, [])])  # (state, moves)
     visited = set()
+    shortest_solution = None
 
-    while stack:
-        state, moves = stack.pop()
+    while queue:
+        state, moves = queue.popleft()
 
         if is_solved(state):
-            return moves
+            print(f"found a solution with {len(moves)} moves")
+            if shortest_solution is None or len(moves) < len(shortest_solution):
+                shortest_solution = moves
+            continue  # Continue searching for potentially shorter solutions
 
         state_tuple = tuple(tuple(tower) for tower in state)
         if state_tuple in visited:
@@ -62,9 +76,9 @@ def solve(initial_state: List[List[str]]) -> List[Tuple[int, int]] | None:
             for to_tower in range(len(state)):
                 if from_tower != to_tower and is_valid_move(state[from_tower], state[to_tower]):
                     new_state = make_move(state, from_tower, to_tower)
-                    stack.append((new_state, moves + [(from_tower, to_tower)]))
+                    queue.append((new_state, moves + [(from_tower, to_tower)]))
 
-    return None  # No solution found
+    return shortest_solution  # Returns None if no solution found
 
 
 if __name__ == "__main__":
@@ -88,7 +102,7 @@ if __name__ == "__main__":
     solution = solve(balls)
 
     if solution:
-        print("Solution found!")
-        visualize_solution(balls, solution)
+        print(f"optimal solution: {len(solution)} moves")
+        # visualize_solution(balls, solution)
     else:
         print("No solution found")
