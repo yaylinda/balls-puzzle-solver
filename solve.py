@@ -42,14 +42,19 @@ def is_solved(state: List[List[str]]) -> bool:
     return all(len(set(tower) - {""}) <= 1 and tower.count("") == 0 for tower in state if "" not in tower)
 
 
-def solve(initial_state: List[List[str]]) -> List[Tuple[int, int]]:
-    def dfs(state: List[List[str]], moves: List[Tuple[int, int]], visited: set) -> List[Tuple[int, int]] | None:
+def solve(initial_state: List[List[str]]) -> List[Tuple[int, int]] | None:
+    stack = [(initial_state, [])]  # (state, moves)
+    visited = set()
+
+    while stack:
+        state, moves = stack.pop()
+
         if is_solved(state):
             return moves
 
         state_tuple = tuple(tuple(tower) for tower in state)
         if state_tuple in visited:
-            return None
+            continue
 
         visited.add(state_tuple)
 
@@ -57,33 +62,29 @@ def solve(initial_state: List[List[str]]) -> List[Tuple[int, int]]:
             for to_tower in range(len(state)):
                 if from_tower != to_tower and is_valid_move(state[from_tower], state[to_tower]):
                     new_state = make_move(state, from_tower, to_tower)
-                    result = dfs(new_state, moves + [(from_tower, to_tower)], visited)
-                    if result:
-                        return result
+                    stack.append((new_state, moves + [(from_tower, to_tower)]))
 
-        return None
+    return None  # No solution found
 
-    return dfs(initial_state, [], set())
-
-
-balls = [
-    ["brown", "green", "brown", "light green"],
-    ["light green", "gray", "light blue", "green"],
-    ["red", "green", "light green", "yellow"],
-    ["pink", "red", "yellow", "purple"],
-    ["light green", "pink", "red", "green"],
-    ["gray", "blue", "pink", "gray"],
-    ["orange", "blue", "yellow", "dark green"],
-    ["purple", "orange", "orange", "dark green"],
-    ["light blue", "blue", "orange", "red"],
-    ["purple", "dark green", "dark green", "light blue"],
-    ["yellow", "pink", "purple", "blue"],
-    ["light blue", "brown", "brown", "gray"],
-    ["", "", "", ""],
-    ["", "", "", ""],
-]
 
 if __name__ == "__main__":
+    balls = [
+        ["brown", "green", "brown", "light green"],
+        ["light green", "gray", "light blue", "green"],
+        ["red", "green", "light green", "yellow"],
+        ["pink", "red", "yellow", "purple"],
+        ["light green", "pink", "red", "green"],
+        ["gray", "blue", "pink", "gray"],
+        ["orange", "blue", "yellow", "dark green"],
+        ["purple", "orange", "orange", "dark green"],
+        ["light blue", "blue", "orange", "red"],
+        ["purple", "dark green", "dark green", "light blue"],
+        ["yellow", "pink", "purple", "blue"],
+        ["light blue", "brown", "brown", "gray"],
+        ["", "", "", ""],
+        ["", "", "", ""],
+    ]
+
     solution = solve(balls)
 
     if solution:
