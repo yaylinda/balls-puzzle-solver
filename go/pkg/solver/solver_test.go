@@ -22,9 +22,10 @@ func TestSolveEasy(t *testing.T) {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				a := assert.New(t)
-				s, _ := Solve(tt.puzzle, PrintOpts{})
+				s, iters := Solve(tt.puzzle, PrintOpts{})
 				a.NotNil(s)
 				a.Equal(tt.expected, len(s.Previous))
+				t.Logf("Iterations: %d", iters)
 			},
 		)
 	}
