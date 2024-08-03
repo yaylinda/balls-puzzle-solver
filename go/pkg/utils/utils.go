@@ -28,3 +28,7 @@ func CreateBoardFromPuzzle(puzzle [][]string) *models.Board {
 
 	return &models.Board{Towers: towers}
 }
+
+func Ptr[K any](x K) *K {
+	return &x
+}

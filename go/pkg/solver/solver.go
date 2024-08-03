@@ -8,7 +8,7 @@ import (
 )
 
 type PrintOpts struct {
-	Mod *int
+	FindShortest bool
 }
 
 // Solve solves the puzzle and returns the final state with all previous board
@@ -31,19 +31,26 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 	}
 
 	iteration := 1
+	var shortestState *models.BoardState
 
 	// Iterate over the queue
 	for len(queue) > 0 {
-		if opts.Mod != nil && iteration%*opts.Mod == 0 {
-			fmt.Printf("iter: %d, queue: %d\n", iteration, len(queue))
-		}
-
 		// Get the first element of the queue
 		currentState := queue[0]
 
 		// Check if the current state is the final state
 		if currentState.IsSolved(2) {
-			return currentState, iteration
+			if !opts.FindShortest {
+				return currentState, iteration
+			}
+			fmt.Printf(
+				"\t[iter=%d] found solution with %d moves\n",
+				iteration,
+				len(currentState.Previous),
+			)
+			if shortestState == nil || len(currentState.Previous) < len(shortestState.Previous) {
+				shortestState = currentState
+			}
 		}
 
 		// Mark the current state as visited
@@ -64,19 +71,11 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 			}
 		}
 
-		if opts.Mod != nil && iteration%*opts.Mod == 0 {
-			fmt.Printf(
-				"\tadded %d / %d next possible states\n",
-				numNew,
-				len(nextStates),
-			)
-		}
-
 		// Remove the current state from the queue
 		queue = queue[1:]
 
 		iteration++
 	}
 
-	return nil, iteration
+	return shortestState, iteration
 }
