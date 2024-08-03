@@ -83,9 +83,11 @@ balls = [
     ["", "", "", ""],
 ]
 
-solution = solve(balls)
-if solution:
-    print("Solution found!")
-    visualize_solution(balls, solution)
-else:
-    print("No solution found")
+if __name__ == "__main__":
+    solution = solve(balls)
+
+    if solution:
+        print("Solution found!")
+        visualize_solution(balls, solution)
+    else:
+        print("No solution found")
