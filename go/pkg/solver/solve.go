@@ -27,7 +27,9 @@ func Solve(puzzle [][]string) {
 
 	// Iterate over the queue
 	for len(queue) > 0 {
-		fmt.Printf("iter: %d, queue: %d\n", iteration, len(queue))
+		if iteration%1000 == 0 {
+			fmt.Printf("iter: %d, queue: %d\n", iteration, len(queue))
+		}
 
 		// Get the first element of the queue
 		currentState := queue[0]
@@ -56,7 +58,9 @@ func Solve(puzzle [][]string) {
 			}
 		}
 
-		fmt.Printf("\tadded %d / %d next possible states\n", numNew, len(nextStates))
+		if iteration%1000 == 0 {
+			fmt.Printf("\tadded %d / %d next possible states\n", numNew, len(nextStates))
+		}
 
 		// Remove the current state from the queue
 		queue = queue[1:]

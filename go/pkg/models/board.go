@@ -127,7 +127,7 @@ func (b *Board) IsSolved(expectedEmpty int) bool {
 		}
 	}
 
-	fmt.Printf("\t\t numEmptyTowers=%d, numCompleteTowers=%d\n", numEmptyTowers, numCompleteTowers)
+	// fmt.Printf("\t\t numEmptyTowers=%d, numCompleteTowers=%d\n", numEmptyTowers, numCompleteTowers)
 
 	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(b.Towers)-expectedEmpty
 }

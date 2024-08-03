@@ -6,7 +6,8 @@ import (
 )
 
 func main() {
-	solver.Solve(puzzles.PUZZLE_COMPLETE)
-	solver.Solve(puzzles.PUZZLE_EASY_1)
-	solver.Solve(puzzles.PUZZLE_EASY_2)
+	// solver.Solve(puzzles.PUZZLE_COMPLETE)
+	// solver.Solve(puzzles.PUZZLE_EASY_1)
+	// solver.Solve(puzzles.PUZZLE_EASY_2)
+	solver.Solve(puzzles.PUZZLE_HARD)
 }
