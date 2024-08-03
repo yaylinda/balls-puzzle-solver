@@ -1,7 +1,7 @@
 package main
 
 import (
-	"balls_puzzle_solver/pkg/board"
+	"balls_puzzle_solver/pkg/models"
 	"balls_puzzle_solver/pkg/puzzles"
 )
 
@@ -10,7 +10,7 @@ func main() {
 	towers := puzzles.CreateTowers(puzzles.PUZZLE_HARD)
 
 	// Create a queue to keep track of the possible moves
-	var queue []*board.BoardState
+	var queue []*models.BoardState
 
 	// Populate the queue with all possible initial moves
 	for i, t1 := range towers {
@@ -19,13 +19,13 @@ func main() {
 				continue
 			}
 
-			boardState := &board.BoardState{
+			boardState := &models.BoardState{
 				Board: towers,
-				Move: board.Move{
+				Move: models.Move{
 					From: t1,
 					To:   t2,
 				},
-				Previous: []*board.BoardState{},
+				Previous: []*models.BoardState{},
 			}
 
 			queue = append(queue, boardState)

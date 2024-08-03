@@ -3,7 +3,7 @@ package puzzles
 import (
 	"fmt"
 
-	"balls_puzzle_solver/pkg/board"
+	"balls_puzzle_solver/pkg/models"
 )
 
 var PUZZLE_HARD = [][]string{
@@ -24,17 +24,17 @@ var PUZZLE_HARD = [][]string{
 }
 
 // CreateTowers translates a "puzzle" into an array of Towers
-func CreateTowers(balls [][]string) []*board.Tower {
+func CreateTowers(balls [][]string) []*models.Tower {
 	colorCount := make(map[string]int)
-	towers := make([]*board.Tower, len(balls))
+	towers := make([]*models.Tower, len(balls))
 
 	for i, towerBalls := range balls {
-		tower := &board.Tower{Index: i, Balls: make([]*board.Ball, len(towerBalls))}
+		tower := &models.Tower{Index: i, Balls: make([]*models.Ball, len(towerBalls))}
 		for j, color := range towerBalls {
 			if color != "" {
 				colorCount[color]++
 				id := fmt.Sprintf("%s_%d", color, colorCount[color])
-				tower.Balls[j] = &board.Ball{ID: id, Color: color}
+				tower.Balls[j] = &models.Ball{ID: id, Color: color}
 			}
 		}
 		towers[i] = tower

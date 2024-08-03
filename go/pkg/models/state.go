@@ -1,82 +1,9 @@
-package board
+package models
 
 import (
 	"fmt"
 	"strings"
 )
-
-// Ball struct represents a ball with a color
-type Ball struct {
-	ID    string
-	Color string
-}
-
-// Move struct represents moving the top ball from one Tower to another Tower
-type Move struct {
-	From *Tower
-	To   *Tower
-}
-
-// Tower struct represents a collection of 4 balls on top of each other
-type Tower struct {
-	Index int
-	Balls []*Ball
-}
-
-// getTopBall returns the top ball of the Tower, and the index of the ball.
-// If the Tower is empty, it returns nil and -1
-func (t *Tower) getTopBall() (*Ball, int) {
-	for i := range t.Balls {
-		if t.Balls[i] != nil {
-			return t.Balls[i], i
-		}
-	}
-	return nil, -1
-}
-
-// isEmpty returns if the Tower is empty
-func (t *Tower) isEmpty() bool {
-	for i := range t.Balls {
-		if t.Balls[i] != nil {
-			return false
-		}
-	}
-	return true
-}
-
-// isFull returns if the Tower is full
-func (t *Tower) isFull() bool {
-	for i := range t.Balls {
-		if t.Balls[i] == nil {
-			return false
-		}
-	}
-	return true
-}
-
-// isComplete returns if the Tower is full and all balls are the same color
-func (t *Tower) isComplete() bool {
-	if !t.isFull() {
-		return false
-	}
-
-	color := t.Balls[0].Color
-
-	for i := range t.Balls {
-		if t.Balls[i].Color != color {
-			return false
-		}
-	}
-
-	return true
-}
-
-// BoardState struct represents the state of the board
-type BoardState struct {
-	Board    []*Tower
-	Move     Move
-	Previous []*BoardState
-}
 
 // applyMove returns a pointer to a new BoardState after applying the move
 func (bs *BoardState) applyMove() *BoardState {
@@ -166,24 +93,6 @@ func (bs *BoardState) isEqual(other *BoardState) bool {
 
 	// Check that the move is the same
 	return bs.Move.To.Index == other.Move.To.Index && bs.Move.From.Index == other.Move.From.Index
-}
-
-func (bs *BoardState) isSolved(expectedEmpty int) bool {
-	var numEmptyTowers int
-	var numCompleteTowers int
-
-	for _, tower := range bs.Board {
-		if tower.isEmpty() {
-			numEmptyTowers++
-			continue
-		}
-		if tower.isComplete() {
-			numCompleteTowers++
-			continue
-		}
-	}
-
-	return numEmptyTowers == expectedEmpty && numCompleteTowers == len(bs.Board)-expectedEmpty
 }
 
 // String method to return the string representation of a BoardState
