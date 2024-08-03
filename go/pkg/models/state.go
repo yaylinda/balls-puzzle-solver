@@ -38,14 +38,15 @@ func (bs *BoardState) isEqual(other *BoardState) bool {
 
 // String returns the string representation of the BoardState
 func (bs *BoardState) String() string {
-	var builder strings.Builder
-
-	builder.WriteString(bs.Board.String())
-	if bs.Move != nil {
-		builder.WriteString(fmt.Sprintf("%d->%d", bs.Move.From.Index, bs.Move.To.Index))
-	}
-
-	return builder.String()
+	// var builder strings.Builder
+	//
+	// builder.WriteString(bs.Board.String())
+	// if bs.Move != nil {
+	// 	builder.WriteString(fmt.Sprintf("%d->%d", bs.Move.From.Index, bs.Move.To.Index))
+	// }
+	//
+	// return builder.String()
+	return bs.Board.String()
 }
 
 // PrintSolution returns the string representation of the solution
