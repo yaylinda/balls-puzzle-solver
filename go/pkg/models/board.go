@@ -31,6 +31,8 @@ func (b *Board) getNextValidMoves() []*Move {
 
 	for _, t1 := range b.Towers {
 		for _, t2 := range b.Towers {
+			t1 := t1
+			t2 := t2
 			move := &Move{From: t1, To: t2}
 			if b.isMoveValid(move) {
 				moves = append(moves, move)
@@ -78,7 +80,7 @@ func (b *Board) applyMove(move *Move) *Board {
 	// Set the ball in the "to" tower
 	toTowerIndex := move.To.Index
 	_, toBallIndex := move.To.getTopBall()
-	newBoard.Towers[toTowerIndex].Balls[toBallIndex] = &Ball{
+	newBoard.Towers[toTowerIndex].Balls[toBallIndex-1] = &Ball{
 		ID:    fromBall.ID,
 		Color: fromBall.Color,
 	}
@@ -91,13 +93,17 @@ func (b *Board) deepCopy() *Board {
 	var newTowers []*Tower
 
 	for _, tower := range b.Towers {
+		tower := tower
 		var newBalls []*Ball
 		for _, ball := range tower.Balls {
+			ball := ball
+			var newBall *Ball
 			if ball == nil {
-				newBalls = append(newBalls, nil)
-				continue
+				newBall = nil
+			} else {
+				newBall = &Ball{ID: ball.ID, Color: ball.Color}
 			}
-			newBalls = append(newBalls, &Ball{ID: ball.ID, Color: ball.Color})
+			newBalls = append(newBalls, newBall)
 		}
 		newTowers = append(newTowers, &Tower{Balls: newBalls, Index: tower.Index})
 	}

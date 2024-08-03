@@ -3,14 +3,14 @@ package models
 import "strings"
 
 // getTopBall returns the top ball of the Tower, and the index of the ball.
-// If the Tower is empty, it returns nil and -1
+// If the Tower is empty, it returns nil and the length of the Balls slice
 func (t *Tower) getTopBall() (*Ball, int) {
 	for i := range t.Balls {
 		if t.Balls[i] != nil {
 			return t.Balls[i], i
 		}
 	}
-	return nil, -1
+	return nil, len(t.Balls)
 }
 
 // isEmpty returns if the Tower is empty

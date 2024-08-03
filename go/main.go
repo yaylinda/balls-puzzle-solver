@@ -13,6 +13,7 @@ func main() {
 
 	// Keep track of the visited states
 	visited := make(map[string]bool)
+	willVisit := make(map[string]bool)
 
 	// Create a queue with the initial state
 	queue := []*models.BoardState{
@@ -23,8 +24,12 @@ func main() {
 		},
 	}
 
+	iteration := 1
+
 	// Iterate over the queue
 	for len(queue) > 0 {
+		fmt.Printf("iter: %d, queue: %d\n", iteration, len(queue))
+
 		// Get the first element of the queue
 		currentState := queue[0]
 		queue = queue[1:]
@@ -43,9 +48,13 @@ func main() {
 
 		// Add the next possible states to the queue if they have not been visited
 		for _, nextState := range nextStates {
-			if !visited[nextState.String()] {
+			hash := nextState.String()
+			if !visited[hash] && !willVisit[hash] {
 				queue = append(queue, nextState)
+				willVisit[hash] = true
 			}
 		}
+
+		iteration++
 	}
 }

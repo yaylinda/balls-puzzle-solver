@@ -41,7 +41,9 @@ func (bs *BoardState) String() string {
 	var builder strings.Builder
 
 	builder.WriteString(bs.Board.String())
-	builder.WriteString(fmt.Sprintf("%d->%d", bs.Move.From.Index, bs.Move.To.Index))
+	if bs.Move != nil {
+		builder.WriteString(fmt.Sprintf("%d->%d", bs.Move.From.Index, bs.Move.To.Index))
+	}
 
 	return builder.String()
 }
