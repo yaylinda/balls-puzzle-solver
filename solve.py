@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import List, Tuple
 from copy import deepcopy
 
+from visualize import visualize_solution
+
 
 def find_top_ball(tower: List[str]) -> Tuple[int, str]:
     for i, ball in enumerate(tower):
@@ -63,7 +65,7 @@ def solve(initial_state: List[List[str]]) -> List[Tuple[int, int]]:
 
     return dfs(initial_state, [], set())
 
-# Example usage:
+
 balls = [
     ["brown", "green", "brown", "light green"],
     ["light green", "gray", "light blue", "green"],
@@ -83,8 +85,7 @@ balls = [
 
 solution = solve(balls)
 if solution:
-    print("Solution found:")
-    for move in solution:
-        print(f"Move from tower {move[0]} to tower {move[1]}")
+    print("Solution found!")
+    visualize_solution(balls, solution)
 else:
     print("No solution found")
