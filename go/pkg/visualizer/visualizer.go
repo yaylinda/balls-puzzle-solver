@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	ScreenWidth  = 400
-	ScreenHeight = 600
+	ScreenWidth  = 560
+	ScreenHeight = 300
 	cellSize     = 40
 	buttonWidth  = 100
 	buttonHeight = 40
@@ -64,15 +64,22 @@ func (g *Visualizer) Update() error {
 
 func (g *Visualizer) Draw(screen *ebiten.Image) {
 	board := g.States[g.CurrentIndex]
-	for y, tower := range board.Towers {
-		for x, ball := range tower.Balls {
+	for x, tower := range board.Towers {
+		for y, ball := range tower.Balls {
+			var cellColor color.RGBA
+			if ball == nil {
+				cellColor = colorMap[""]
+			} else {
+				cellColor = colorMap[ball.Color]
+			}
+
 			vector.DrawFilledRect(
 				screen,
 				float32(x*cellSize),
 				float32(y*cellSize),
 				cellSize,
 				cellSize,
-				colorMap[ball.Color],
+				cellColor,
 				false,
 			)
 		}
@@ -85,7 +92,7 @@ func (g *Visualizer) Draw(screen *ebiten.Image) {
 		float32(ScreenHeight-buttonHeight),
 		buttonWidth,
 		buttonHeight,
-		color.RGBA{200, 200, 200, 255},
+		color.RGBA{R: 200, G: 200, B: 200, A: 255},
 		false,
 	)
 	vector.DrawFilledRect(
@@ -94,7 +101,7 @@ func (g *Visualizer) Draw(screen *ebiten.Image) {
 		float32(ScreenHeight-buttonHeight),
 		buttonWidth,
 		buttonHeight,
-		color.RGBA{200, 200, 200, 255},
+		color.RGBA{R: 200, G: 200, B: 200, A: 255},
 		false,
 	)
 
@@ -115,7 +122,7 @@ func (g *Visualizer) Draw(screen *ebiten.Image) {
 		gameFont,
 		ScreenWidth/2-40,
 		ScreenHeight-10,
-		color.Black,
+		color.White,
 	)
 }
 
