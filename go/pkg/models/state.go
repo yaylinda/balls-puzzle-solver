@@ -33,6 +33,15 @@ func (bs *BoardState) IsSolved(expectedEmpty int) bool {
 	return bs.Board.isSolved(expectedEmpty)
 }
 
+// GetSolvedPath returns the path to the solved board
+func (bs *BoardState) GetSolvedPath() []*Board {
+	if !bs.IsSolved(2) {
+		return nil
+	}
+
+	return append(bs.Previous, bs.Board)
+}
+
 // Hash returns a unique "hashed" string representation of the board
 func (bs *BoardState) Hash() string {
 	return bs.Board.hash()
