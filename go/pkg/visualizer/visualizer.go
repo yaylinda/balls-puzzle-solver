@@ -15,14 +15,6 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-const (
-	ScreenWidth  = 560
-	ScreenHeight = 300
-	cellSize     = 40
-	buttonWidth  = 100
-	buttonHeight = 40
-)
-
 var (
 	colorMap = map[string]color.RGBA{
 		"brown":       {165, 42, 42, 255},
@@ -44,15 +36,21 @@ var (
 )
 
 type Visualizer struct {
-	States       []*models.Board
-	CurrentIndex int
+	States              []*models.Board
+	CurrentIndex        int
+	UnitSize            int
+	ButtonWidth         int
+	ScreenHeight        int
+	ScreenWidth         int
+	SecondRowTowerIndex int
+	SecondRowOffset     float32
 }
 
 func (g *Visualizer) Update() error {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		if y > ScreenHeight-buttonHeight {
-			if x < ScreenWidth/2 {
+		if y > g.ScreenHeight-g.UnitSize {
+			if x < g.ScreenWidth/2 {
 				g.prevPuzzle()
 			} else {
 				g.nextPuzzle()
@@ -64,6 +62,7 @@ func (g *Visualizer) Update() error {
 
 func (g *Visualizer) Draw(screen *ebiten.Image) {
 	board := g.States[g.CurrentIndex]
+
 	for x, tower := range board.Towers {
 		for y, ball := range tower.Balls {
 			var cellColor color.RGBA
@@ -73,61 +72,77 @@ func (g *Visualizer) Draw(screen *ebiten.Image) {
 				cellColor = colorMap[ball.Color]
 			}
 
+			xPos := x
+			yPos := float32(y)
+			if x >= g.SecondRowTowerIndex {
+				xPos = x % g.SecondRowTowerIndex
+				yPos += g.SecondRowOffset
+			}
+
 			vector.DrawFilledRect(
 				screen,
-				float32(x*cellSize),
-				float32(y*cellSize),
-				cellSize,
-				cellSize,
+				float32(xPos*g.UnitSize),
+				yPos*float32(g.UnitSize),
+				float32(g.UnitSize),
+				float32(g.UnitSize),
 				cellColor,
 				false,
 			)
 		}
 	}
 
+	textPaddingOffset := float32(g.UnitSize) / 4
+
 	// Draw buttons
 	vector.DrawFilledRect(
 		screen,
 		0,
-		float32(ScreenHeight-buttonHeight),
-		buttonWidth,
-		buttonHeight,
+		float32(g.ScreenHeight-g.UnitSize),
+		float32(g.ButtonWidth),
+		float32(g.UnitSize),
 		color.RGBA{R: 200, G: 200, B: 200, A: 255},
 		false,
 	)
-	vector.DrawFilledRect(
+	text.Draw(
 		screen,
-		float32(ScreenWidth-buttonWidth),
-		float32(ScreenHeight-buttonHeight),
-		buttonWidth,
-		buttonHeight,
-		color.RGBA{R: 200, G: 200, B: 200, A: 255},
-		false,
+		"Previous",
+		gameFont,
+		int(textPaddingOffset),
+		g.ScreenHeight-int(textPaddingOffset),
+		color.Black,
 	)
 
-	text.Draw(screen, "Previous", gameFont, 10, ScreenHeight-10, color.Black)
+	vector.DrawFilledRect(
+		screen,
+		float32(g.ScreenWidth-g.ButtonWidth),
+		float32(g.ScreenHeight-g.UnitSize),
+		float32(g.ButtonWidth),
+		float32(g.UnitSize),
+		color.RGBA{R: 200, G: 200, B: 200, A: 255},
+		false,
+	)
 	text.Draw(
 		screen,
 		"Next",
 		gameFont,
-		ScreenWidth-90,
-		ScreenHeight-10,
+		g.ScreenWidth-g.ButtonWidth+int(textPaddingOffset),
+		g.ScreenHeight-int(textPaddingOffset),
 		color.Black,
 	)
 
-	// Draw puzzle number
+	// Draw step number
 	text.Draw(
 		screen,
-		fmt.Sprintf("Step %d/%d", g.CurrentIndex+1, len(g.States)),
+		fmt.Sprintf("Step %d / %d", g.CurrentIndex+1, len(g.States)),
 		gameFont,
-		ScreenWidth/2-40,
-		ScreenHeight-10,
+		0,
+		g.ScreenHeight-(2*g.UnitSize),
 		color.White,
 	)
 }
 
 func (g *Visualizer) Layout(outsideWidth, outsideHeight int) (int, int) {
-	return ScreenWidth, ScreenHeight
+	return g.ScreenWidth, g.ScreenHeight
 }
 
 func (g *Visualizer) nextPuzzle() {

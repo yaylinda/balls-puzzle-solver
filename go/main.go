@@ -12,15 +12,21 @@ import (
 func main() {
 	s, _ := solver.Solve(puzzles.PUZZLE_HARD, solver.PrintOpts{})
 
-	ebiten.SetWindowSize(visualizer.ScreenWidth, visualizer.ScreenHeight)
+	viz := &visualizer.Visualizer{
+		CurrentIndex:        0,
+		States:              s.GetSolvedPath(),
+		UnitSize:            50,
+		ButtonWidth:         50 * 3,
+		ScreenWidth:         50 * len(puzzles.PUZZLE_HARD) / 2,
+		ScreenHeight:        50 * (len(puzzles.PUZZLE_HARD[0])*2 + 3),
+		SecondRowTowerIndex: len(puzzles.PUZZLE_HARD) / 2,
+		SecondRowOffset:     float32(len(puzzles.PUZZLE_HARD[0])) + 0.5,
+	}
+
+	ebiten.SetWindowSize(viz.ScreenWidth, viz.ScreenHeight)
 	ebiten.SetWindowTitle("Color Grid Visualization")
 
-	if err := ebiten.RunGame(
-		&visualizer.Visualizer{
-			CurrentIndex: 0,
-			States:       s.GetSolvedPath(),
-		},
-	); err != nil {
+	if err := ebiten.RunGame(viz); err != nil {
 		log.Fatal(err)
 	}
 }
