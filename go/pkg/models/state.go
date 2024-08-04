@@ -1,15 +1,10 @@
 package models
 
-import (
-	"fmt"
-	"strings"
-)
+import "balls_puzzle_solver/pkg/utils"
 
 // GetNextPossibleStates returns the next possible states from the current state
 func (bs *BoardState) GetNextPossibleStates() []*BoardState {
 	validMoves := bs.Board.getNextValidMoves()
-
-	// TODO: Trimming logic
 
 	var nextStates []*BoardState
 
@@ -19,7 +14,7 @@ func (bs *BoardState) GetNextPossibleStates() []*BoardState {
 		newBoardState := &BoardState{
 			Board:    newBoard,
 			Move:     move,
-			Previous: append(bs.Previous, bs.Board),
+			Previous: bs,
 		}
 
 		nextStates = append(nextStates, newBoardState)
@@ -39,33 +34,18 @@ func (bs *BoardState) GetSolvedPath() []*Board {
 		return nil
 	}
 
-	return append(bs.Previous, bs.Board)
+	var path []*Board
+	currentState := bs
+	for currentState != nil {
+		path = append(path, currentState.Board)
+		currentState = currentState.Previous
+	}
+
+	utils.ReverseArray(path)
+	return path
 }
 
 // Hash returns a unique "hashed" string representation of the board
 func (bs *BoardState) Hash() string {
 	return bs.Board.hash()
-}
-
-// PrintSolution returns the string representation of the solution
-func (bs *BoardState) PrintSolution() string {
-	var builder strings.Builder
-
-	builder.WriteString("============================================\n")
-	builder.WriteString(
-		fmt.Sprintf(
-			"Solution with %d moves\n",
-			len(bs.Previous),
-		),
-	)
-	builder.WriteString("============================================\n")
-
-	boards := append(bs.Previous, bs.Board)
-	for i, board := range boards {
-		builder.WriteString(fmt.Sprintf("Move %d:\n", i))
-		builder.WriteString(board.string())
-		builder.WriteString("----------------------------------\n")
-	}
-
-	return builder.String()
 }

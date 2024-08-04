@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"balls_puzzle_solver/pkg/models"
-	"balls_puzzle_solver/pkg/utils"
 )
 
 type PrintOpts struct {
@@ -15,7 +14,7 @@ type PrintOpts struct {
 // states, and the number of iterations
 func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 	// Create a board from the puzzle
-	initialBoard := utils.CreateBoardFromPuzzle(puzzle)
+	initialBoard := createBoardFromPuzzle(puzzle)
 
 	// Keep track of the visited states
 	visited := make(map[string]bool)
@@ -26,7 +25,7 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 		{
 			Board:    initialBoard,
 			Move:     nil,
-			Previous: []*models.Board{},
+			Previous: nil,
 		},
 	}
 
@@ -43,12 +42,13 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 			if !opts.FindShortest {
 				return currentState, iteration
 			}
+			solvedPath := currentState.GetSolvedPath()
 			fmt.Printf(
 				"\t[iter=%d] found solution with %d moves\n",
 				iteration,
-				len(currentState.Previous),
+				len(solvedPath)-1,
 			)
-			if shortestState == nil || len(currentState.Previous) < len(shortestState.Previous) {
+			if shortestState == nil || len(solvedPath) < len(shortestState.GetSolvedPath()) {
 				shortestState = currentState
 			}
 		}
@@ -65,7 +65,6 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 			hash := nextState.Hash()
 			if !visited[hash] && !willVisit[hash] {
 				numNew++
-				// fmt.Printf("\t\t[%d] %s\n", numNew, hash)
 				willVisit[hash] = true
 				queue = append(queue, nextState)
 			}
@@ -78,4 +77,27 @@ func Solve(puzzle [][]string, opts PrintOpts) (*models.BoardState, int) {
 	}
 
 	return shortestState, iteration
+}
+
+// createBoardFromPuzzle creates a Board from a puzzle
+func createBoardFromPuzzle(puzzle [][]string) *models.Board {
+	colorCount := make(map[string]int)
+	towers := make([]*models.Tower, len(puzzle))
+
+	for i, towerBalls := range puzzle {
+		tower := &models.Tower{
+			Index: i,
+			Balls: make([]*models.Ball, len(towerBalls)),
+		}
+		for j, color := range towerBalls {
+			if color != "" {
+				colorCount[color]++
+				id := fmt.Sprintf("%s_%d", color, colorCount[color])
+				tower.Balls[j] = &models.Ball{ID: id, Color: color}
+			}
+		}
+		towers[i] = tower
+	}
+
+	return &models.Board{Towers: towers}
 }

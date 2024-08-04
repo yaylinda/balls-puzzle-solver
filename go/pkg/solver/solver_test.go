@@ -24,7 +24,7 @@ func TestSolveEasy(t *testing.T) {
 				a := assert.New(t)
 				s, iters := Solve(tt.puzzle, PrintOpts{})
 				a.NotNil(s)
-				a.Equal(tt.expected, len(s.Previous))
+				a.Equal(tt.expected, len(s.GetSolvedPath())-1)
 				t.Logf("Iterations: %d", iters)
 			},
 		)
@@ -36,5 +36,5 @@ func TestSolveHard(t *testing.T) {
 	s, i := Solve(puzzles.PUZZLE_HARD, PrintOpts{FindShortest: true})
 	a.NotNil(s)
 	t.Logf("Iterations: %d", i)
-	t.Logf("Path: %d", len(s.Previous))
+	t.Logf("Path: %d", len(s.GetSolvedPath())-1)
 }

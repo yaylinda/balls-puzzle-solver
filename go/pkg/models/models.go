@@ -23,9 +23,10 @@ type Board struct {
 	Towers []*Tower
 }
 
-// BoardState struct represents a board state node in the search tree
+// BoardState struct represents a board state node in the search tree.
+// The previous board with the move applied results in the current board.
 type BoardState struct {
 	Board    *Board
 	Move     *Move
-	Previous []*Board
+	Previous *BoardState
 }
